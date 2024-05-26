@@ -9,7 +9,7 @@ import com.amplifyframework.core.Amplify
 
 class AmplifyCognito(private val context: Context) {
 
-    public fun SignUp(email: String, username: String, password: String) {
+    public fun signUp(email: String, username: String, password: String) {
         val options = AuthSignUpOptions.builder()
             .userAttribute(AuthUserAttributeKey.email(), email)
             .build()
@@ -26,6 +26,19 @@ class AmplifyCognito(private val context: Context) {
             })
     }
 
+    public fun signin(username: String, password: String){
+        Amplify.Auth.signIn(username, password,
+            { result ->
+                if (result.isSignedIn) {
+                    Log.i("AmplifyCognito_SignIn", "Sign in succeeded")
+                    loadHome()
+                } else {
+                    Log.i("AmplifyCognito_SignIn", "Sign in not complete")
+                }
+            },
+            { Log.e("AmplifyCognito_SignIn", "Failed to sign in", it) }
+        )
+    }
 
     public fun confirm(username: String, code: String){
         Amplify.Auth.confirmSignUp(
@@ -43,17 +56,22 @@ class AmplifyCognito(private val context: Context) {
         )
     }
 
-    private fun loadConfirm(username: String) {
+    fun loadConfirm(username: String) {
         val intent = Intent(context, ConfirmActivity::class.java)
         intent.putExtra("username", username)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 
-    private fun loadLogin() {
+    fun loadLogin() {
         val intent = Intent(context, SignInActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 
+    private fun loadHome() {
+        val intent = Intent(context, HomeActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
 }
