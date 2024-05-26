@@ -5,4 +5,10 @@
     <string name="email">Enter email</string>
     <string name="password">Enter password</string>
     <string name="signupbtn">Sign Up</string>
+    <!-- CONFIRM -->
+    <string name="code">Enter code</string>
+    <string name="verify">Verify</string>
+    <!-- SIGN IN -->
+    <string name="signinbtn">Log in</string>
+    <string name="signoutbtn">Log out</string>
 </resources>
