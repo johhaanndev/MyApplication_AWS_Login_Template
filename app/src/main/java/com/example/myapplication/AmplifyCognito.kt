@@ -26,12 +26,6 @@ class AmplifyCognito(private val context: Context) {
             })
     }
 
-    private fun loadConfirm(username: String) {
-        val intent = Intent(context, ConfirmActivity::class.java)
-        intent.putExtra("username", username)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
-    }
 
     public fun confirm(username: String, code: String){
         Amplify.Auth.confirmSignUp(
@@ -40,13 +34,26 @@ class AmplifyCognito(private val context: Context) {
             { result ->
                 if (result.isSignUpComplete) {
                     Log.i("AmplifyCognito_Confirm", "Confirm signUp succeeded")
-                    
+                    loadLogin()
                 } else {
                 }
                 Log.i("AmplifyCognito_Confirm","Confirm sign up not complete")
             },
             { Log.e("AmplifyCognito_Confirm", "Failed to confirm sign up", it) }
         )
+    }
+
+    private fun loadConfirm(username: String) {
+        val intent = Intent(context, ConfirmActivity::class.java)
+        intent.putExtra("username", username)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
+    private fun loadLogin() {
+        val intent = Intent(context, SignInActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
     }
 
 }
