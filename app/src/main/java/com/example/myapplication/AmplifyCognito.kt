@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.amplifyframework.auth.AuthUserAttributeKey
+import com.amplifyframework.auth.cognito.result.AWSCognitoAuthSignOutResult
+import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 
@@ -31,13 +33,30 @@ class AmplifyCognito(private val context: Context) {
             { result ->
                 if (result.isSignedIn) {
                     Log.i("AmplifyCognito_SignIn", "Sign in succeeded")
-                    loadHome()
+                    loadHome(username)
                 } else {
                     Log.i("AmplifyCognito_SignIn", "Sign in not complete")
                 }
             },
             { Log.e("AmplifyCognito_SignIn", "Failed to sign in", it) }
         )
+    }
+    public fun SignOut(){
+        val options = AuthSignOutOptions.builder()
+            .globalSignOut(true)
+            .build()
+
+        Amplify.Auth.signOut(options) { signOutResult ->
+            when(signOutResult) {
+                is AWSCognitoAuthSignOutResult.CompleteSignOut -> {
+                    Log.i("Amplify_SignOut", "Sign out succeeded")
+                    loadLogin()
+                }
+                is AWSCognitoAuthSignOutResult.FailedSignOut -> {
+                    Log.e("Amplify_SignOut", "Failed to sign out")
+                }
+            }
+        }
     }
 
     public fun confirm(username: String, code: String){
@@ -69,9 +88,10 @@ class AmplifyCognito(private val context: Context) {
         context.startActivity(intent)
     }
 
-    private fun loadHome() {
+    private fun loadHome(username: String) {
         val intent = Intent(context, HomeActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra("username", username)
         context.startActivity(intent)
     }
 }
